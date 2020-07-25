@@ -4,7 +4,7 @@ import decode from 'jwt-decode'
 import router from '../router'
 
 Vue.use(Vuex)
-
+ //no tocar
 export default new Vuex.Store({
   state: {
     token: null,

@@ -10,9 +10,11 @@
       >
         <template v-slot:top>
           <v-toolbar flat color="white">
+            <!-- titulo -->
             <v-toolbar-title>Sede</v-toolbar-title>
             <v-divider class="mx-4" inset vertical></v-divider>
             <v-spacer></v-spacer>
+            <!-- busqueda -->
             <v-text-field
               class="text-xs-center"
               v-model="search"
@@ -22,7 +24,7 @@
               hide-details
             ></v-text-field>
             <v-spacer></v-spacer>
-            <!--dialogo agregar / editar -->
+            <!--el formulario que sirve para agregar / editar -->
             <v-dialog v-model="dialog" max-width="700px">
               <template v-slot:activator="{ on, attrs }">
                 <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on">Nuevo</v-btn>
@@ -54,7 +56,7 @@
                 </v-card-actions>
               </v-card>
             </v-dialog>
-            <!--dialogo activar / desactivar -->
+            <!--el formulario que es para activar / desactivar -->
             <v-dialog v-model="adModal" max-width="300px">
               <v-card>
                 <v-card-title>
@@ -72,12 +74,18 @@
                   <v-spacer></v-spacer>
                   <v-btn color="green darken-1" text @click="activarDesactivaCerrar">Cancelar</v-btn>
                   <v-btn color="blue darken-1" v-if="adAccion==0" text @click="activar">Activar</v-btn>
-                  <v-btn color="blue darken-1" v-if="adAccion==1" text @click="desactivar">Desactivar</v-btn>
+                  <v-btn
+                    color="blue darken-1"
+                    v-if="adAccion==1"
+                    text
+                    @click="desactivar"
+                  >Desactivar</v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
           </v-toolbar>
         </template>
+        <!--listar tabla -->
         <template v-slot:item.acciones="{ item }">
           <v-icon class="mr-2" @click="editItem(item)">edit</v-icon>
 
@@ -91,6 +99,7 @@
             {{getEstado(item.estado)}}
           </v-btn>
         </template>
+        <!-- si no se encuentra ningun dato -->
         <template v-slot:no-data>
           <v-btn color="primary" @click="listar()">Resetear</v-btn>
         </template>
@@ -111,7 +120,7 @@ export default {
         { text: "acciones - estado", value: "acciones" },
         //{ text: "estado ", value: "estado" },
         { text: "nombre", value: "nombre" },
-        { text: "pais", value: "pais" } 
+        { text: "pais", value: "pais" },
       ],
       editedIndex: -1,
       _id: "",
@@ -122,19 +131,19 @@ export default {
       adModal: 0,
       adAccion: 0,
       adNombre: "",
-      adId: ""
+      adId: "",
     };
   },
   computed: {
     formTitle() {
       return this.editedIndex === -1 ? "Nuevo" : "Editar";
-    }
+    },
   },
 
   watch: {
     dialog(val) {
       val || this.close();
-    }
+    },
   },
 
   created() {
@@ -146,10 +155,10 @@ export default {
       let me = this;
       axios
         .get("sede/list")
-        .then(function(response) {
+        .then(function (response) {
           me.sedes = response.data;
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.log(error);
         });
     },
@@ -200,16 +209,16 @@ export default {
       //editar
       axios
         .put("sede/activate", {
-          '_id': this.adId
+          _id: this.adId,
         })
-        .then(function(response) {
+        .then(function (response) {
           me.adModal = 0;
           me.adAccion = 0;
           me.adNombre = "";
           me.adId = "";
           me.listar();
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.log(error);
         });
     },
@@ -219,16 +228,16 @@ export default {
       //editar
       axios
         .put("sede/desactivate", {
-          '_id': this.adId
+          _id: this.adId,
         })
-        .then(function(response) {
+        .then(function (response) {
           me.adModal = 0;
           me.adAccion = 0;
           me.adNombre = "";
           me.adId = "";
           me.listar();
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.log(error);
         });
     },
@@ -257,31 +266,31 @@ export default {
         //editar
         axios
           .put("sede/update", {
-            '_id': this._id,
-            'nombre': this.nombre,
-            'pais': this.pais
+            _id: this._id,
+            nombre: this.nombre,
+            pais: this.pais,
           })
-          .then(function(response) {
+          .then(function (response) {
             me.limpiar();
             me.close();
             me.listar();
           })
-          .catch(function(error) {
+          .catch(function (error) {
             console.log(error);
           });
       } else {
         //crear
         axios
           .post("sede/add", {
-            'nombre': this.nombre,
-            'pais': this.pais
+            nombre: this.nombre,
+            pais: this.pais,
           })
-          .then(function(response) {
+          .then(function (response) {
             me.limpiar();
             me.close();
             me.listar();
           })
-          .catch(function(error) {
+          .catch(function (error) {
             console.log(error);
           });
       }
@@ -294,7 +303,7 @@ export default {
     getEstado(estado) {
       if (estado == 1) return "Activo";
       else return "Inactivo";
-    }
-  }
+    },
+  },
 };
 </script>

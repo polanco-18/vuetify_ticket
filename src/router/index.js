@@ -7,7 +7,7 @@ import Login from '../components/Login.vue'
 import Usuario from '../components/Usuario.vue'
 
 Vue.use(VueRouter)
-
+//se agregan las rutas para las vistas amigables, declaran su ruta de su crud
 var router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,

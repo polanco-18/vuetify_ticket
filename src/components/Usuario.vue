@@ -46,7 +46,7 @@
                       </v-col>
                       <v-col cols="12" sm="12" md="12" v-show="valida">
                         <v-col class="d-flex" cols="12" sm="6">
-                          <v-select :items="items" label="Standard"></v-select>
+                          <v-select   label="Standard"></v-select>
                         </v-col>
                       </v-col>
                     </v-row>
