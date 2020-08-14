@@ -5,6 +5,8 @@ import Home from '../views/Home.vue'
 import Sede from '../components/Sede.vue'
 import Login from '../components/Login.vue'
 import Usuario from '../components/Usuario.vue'
+import Servicio from '../components/Servicio.vue'
+import Equipo from '../components/Equipo.vue'
 
 Vue.use(VueRouter)
 //se agregan las rutas para las vistas amigables, declaran su ruta de su crud
@@ -40,6 +42,14 @@ var router = new VueRouter({
     path: '/usuario',
     name: 'usuario',
     component: Usuario,
+    meta:{
+      administrador: true 
+    }
+  },
+  {
+    path: '/servicio',
+    name: 'servicio',
+    component: Servicio,
     meta:{
       administrador: true 
     }

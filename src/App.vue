@@ -20,6 +20,14 @@
           </v-list-item>
         </template>
         <template v-if="esAdministrador">
+          <v-list-item :to="{name:'servicio'}">
+            <v-list-item-action>
+              <v-icon>design_services</v-icon>
+            </v-list-item-action>
+            <v-list-item-title>Servicio</v-list-item-title>
+          </v-list-item>
+        </template>
+        <template v-if="esAdministrador">
           <v-list-item :to="{name:'usuario'}">
             <v-list-item-action>
               <v-icon>supervised_user_circle</v-icon>
