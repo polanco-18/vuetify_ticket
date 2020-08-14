@@ -43,6 +43,14 @@ var router = new VueRouter({
     meta:{
       administrador: true 
     }
+  },
+  {
+    path: '/equipo',
+    name: 'equipo',
+    component: Equipo,
+    meta:{
+      administrador: true 
+    }
   }
 ]
 
