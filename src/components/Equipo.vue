@@ -167,12 +167,12 @@ export default {
       this.validaMensaje = [];
       if (this.tipo.length < 1 || this.tipo.length > 20) {
         this.validaMensaje.push(
-          "El valor ingresado debe tener entre 1-20 caracteres"
+          "El valor ingresado debe tener entre 1-20 caracteres!"
         );
       }
       if (this.posesion.length < 1 || this.posesion.length > 50) {
         this.validaMensaje.push(
-          "El valor ingresado debe tener entre 1-20 caracteres"
+          "El valor ingresado debe tener entre 1-20 caracteres!"
         );
       }
       if (this.validaMensaje.length) {
