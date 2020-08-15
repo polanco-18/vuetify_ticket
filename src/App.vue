@@ -10,13 +10,21 @@
             </v-list-item-action>
             <v-list-item-title>Inicio</v-list-item-title>
           </v-list-item>
-        </template> 
+        </template>  
         <template v-if="esAdministrador">
           <v-list-item :to="{name:'sede'}">
             <v-list-item-action>
               <v-icon>home_work</v-icon>
             </v-list-item-action>
             <v-list-item-title>Sede</v-list-item-title>
+          </v-list-item>
+        </template>
+        <template v-if="esAdministrador">
+          <v-list-item :to="{name:'equipo'}">
+            <v-list-item-action>
+              <v-icon>people</v-icon>
+            </v-list-item-action>
+            <v-list-item-title>Equipo</v-list-item-title>
           </v-list-item>
         </template>
         <template v-if="esAdministrador">
@@ -30,9 +38,25 @@
         <template v-if="esAdministrador">
           <v-list-item :to="{name:'usuario'}">
             <v-list-item-action>
-              <v-icon>supervised_user_circle</v-icon>
+              <v-icon>person</v-icon>
             </v-list-item-action>
             <v-list-item-title>Usuario</v-list-item-title>
+          </v-list-item>
+        </template>
+        <template v-if="esAdministrador">
+          <v-list-item :to="{name:'AsigUsuario'}">
+            <v-list-item-action>
+              <v-icon>supervised_user_circle</v-icon>
+            </v-list-item-action>
+            <v-list-item-title>Asignar Usuario</v-list-item-title>
+          </v-list-item>
+        </template>
+        <template v-if="esAdministrador">
+          <v-list-item :to="{name:'ticket'}">
+            <v-list-item-action>
+              <v-icon>desktop_mac</v-icon>
+            </v-list-item-action>
+            <v-list-item-title>Ticket</v-list-item-title>
           </v-list-item>
         </template>
       </v-list>
