@@ -35,18 +35,61 @@
                 <v-card-text>
                   <v-container>
                     <v-row>
+                      <v-col class="d-flex" cols="12" sm="12">
+                        <v-select :items="selectTipoD" v-model="tipo_documento" label="Tipo de documento"></v-select>
+                      </v-col>
+                      <v-col cols="12" sm="12" md="12">
+                        <v-text-field v-model="num_documento" label="N° de documento" required></v-text-field>
+                      </v-col>
                       <v-col cols="12" sm="12" md="12">
                         <v-text-field v-model="nombre" label="Nombre" required></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="12" md="12">
-                        <v-text-field v-model="apellido" label="apellido" required></v-text-field>
+                        <v-text-field
+                          v-model="apellido_paterno" 
+                          label="Apellido Paterno"
+                          required
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="12" sm="12" md="12">
+                        <v-text-field
+                          v-model="apellido_materno" 
+                          label="Apellido Materno"
+                          required
+                        ></v-text-field>
+                      </v-col>
+                      <v-col class="d-flex" cols="12" sm="12">
+                        <v-select :items="selectRol" v-model="rol" label="Rol"></v-select>
+                      </v-col>
+                      <v-col cols="12" sm="12" md="12">
+                        <v-text-field v-model="email" :rules="emailRules" label="correo" required></v-text-field>
+                      </v-col>
+                      <v-col cols="12" sm="12" md="12">
+                        <v-text-field
+                          v-model="telefono" 
+                          label="telefono"
+                          required
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="12" sm="12" md="12">
+                        <v-text-field
+                          v-model="password"
+                          :append-icon="show1 ? 'remove_red_eye' : 'remove_red_eye'" 
+                          :rules="rulesPassword"
+                          :type="show1 ? 'text' : 'password'"
+                          name="input-10-1"
+                          label="Contraseña"
+                          hint="Minimo 7 characteres"
+                          counter
+                          @click:append="show1 = !show1"
+                        ></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="12" md="12" v-show="valida">
                         <div class="red--text" v-for="v in validaMensaje" :key="v" v-text="v"></div>
                       </v-col>
                       <v-col cols="12" sm="12" md="12" v-show="valida">
                         <v-col class="d-flex" cols="12" sm="6">
-                          <v-select   label="Standard"></v-select>
+                          <v-select label="Standard"></v-select>
                         </v-col>
                       </v-col>
                     </v-row>
@@ -113,26 +156,44 @@ import axios from "axios";
 export default {
   data() {
     return {
+      //---
       dialog: false,
       search: "",
       usuarios: [],
+      selectRol: ["admin", "trabajador", "cliente"],
+      selectTipoD: ["DNI", "Carnet Estranjeria"],
       headers: [
         { text: "acciones - estado", value: "acciones" },
         { text: "nombre", value: "nombre" },
-        { text: "apellido", value: "apellido" },
+        { text: "apellido Paterno", value: "apellido_paterno" },
+        { text: "apellido Materno", value: "apellido_materno" },
+        { text: "rol", value: "rol" },
         { text: "documento", value: "tipo_documento" },
         { text: "N° documento", value: "num_documento" },
         { text: "telefono", value: "telefono" },
         { text: "email", value: "email" },
       ],
+      //contraseña validar
+      show1: false, 
+      rulesPassword: [
+        (v) => !!v || "Es requerido",
+        (v) => v.length <= 30 || "debe ser menos de 30 digitos",
+      ], 
+      emailRules: [
+        (v) => !!v || "E-mail es requerido",
+        (v) => /.+@.+/.test(v) || "E-mail debe ser valido",
+      ],
       editedIndex: -1,
       _id: "",
-      nombre: "",
-      apellido: "",
       tipo_documento: "",
       num_documento: "",
+      nombre: "",
+      apellido_paterno: "",
+      apellido_materno: "",
       telefono: "",
       email: "",
+      rol: "",
+      password: "",
       valida: 0,
       validaMensaje: [],
       adModal: 0,
@@ -177,7 +238,7 @@ export default {
           "El nombre de la usuario debe tener entre 1-50 caracteres"
         );
       }
-      if (this.apellido.length < 1 || this.apellido.length > 50) {
+      if (this.apellido_paterno.length < 1 || this.apellido_paterno.length > 50) {
         this.validaMensaje.push(
           "La apellido de la usuario debe tener entre 1-50 caracteres"
         );
@@ -288,9 +349,16 @@ export default {
       } else {
         //crear
         axios
-          .post("usuario/add", {
+          .post("usuario/add", { 
             nombre: this.nombre,
-            apellido: this.apellido,
+            apellido_paterno: this.apellido_paterno,
+            apellido_materno: this.apellido_materno,
+            tipo_documento: this.tipo_documento,
+            telefono: this.telefono,
+            email: this.email,
+            password: this.password,
+            rol: this.rol,
+            num_documento: this.num_documento,
           })
           .then(function (response) {
             me.limpiar();

@@ -6,7 +6,7 @@ import vuetify from './plugins/vuetify'
 import axios from 'axios'
 
 Vue.config.productionTip = false
-axios.defaults.baseURL='http://localhost:3000/ticket/'
+axios.defaults.baseURL='http://localhost:4000/ticket/'
 
 new Vue({
   router,
