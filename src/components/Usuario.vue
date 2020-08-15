@@ -249,10 +249,16 @@ export default {
       return this.valida;
     },
 
-    editItem(item) {
+    editItem(item) { 
       this._id = item._id;
       this.nombre = item.nombre;
-      this.apellido = item.apellido;
+      this.apellido_paterno = item.apellido_paterno;
+      this.apellido_materno = item.apellido_materno;
+      this.num_documento = item.num_documento;
+      this.tipo_documento = item.tipo_documento;
+      this.telefono = item.telefono;
+      this.email = item.email; 
+      this.rol = item.rol;
       this.dialog = true;
       this.editedIndex = 1;
     },
@@ -336,7 +342,14 @@ export default {
           .put("usuario/update", {
             _id: this._id,
             nombre: this.nombre,
-            apellido: this.apellido,
+            apellido_paterno: this.apellido_paterno,
+            apellido_materno: this.apellido_materno,
+            tipo_documento: this.tipo_documento,
+            telefono: this.telefono,
+            email: this.email,
+            password: this.password,
+            rol: this.rol,
+            num_documento: this.num_documento,
           })
           .then(function (response) {
             me.limpiar();
