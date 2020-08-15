@@ -41,7 +41,7 @@
     <v-app-bar :clipped-left="$vuetify.breakpoint.lgAndUp" app color="blue darken-3" dark>
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       <v-toolbar-title style="width: 300px" class="ml-0 pl-4">
-        <span class="hidden-sm-and-down">TicketMaster</span>
+        <span class="hidden-sm-and-down"><v-icon>desktop_windows</v-icon> TicketMaster</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn  @click="salir()" icon v-if="logueado">
