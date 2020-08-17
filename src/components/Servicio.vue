@@ -181,7 +181,7 @@ export default {
       }
       if (this.descripcion.length < 1 || this.descripcion.length > 250) {
         this.validaMensaje.push(
-          "La campaña debe tener entre 1-250 caracteres"
+          "La descripcion debe tener entre 1-250 caracteres"
         );
       } 
       if (this.validaMensaje.length) {
