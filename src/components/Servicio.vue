@@ -39,6 +39,12 @@
                       <v-col cols="12" sm="12" md="12">
                         <v-text-field v-model="nombre" label="Nombre" required></v-text-field>
                       </v-col> 
+                       <v-col cols="12" sm="12" md="12">
+                        <v-text-field v-model="campaña" label="Campaña" required></v-text-field>
+                      </v-col>
+                      <v-col cols="12" sm="12" md="12">
+                        <v-text-field v-model="descripcion" label="Descripcion" required></v-text-field>
+                      </v-col>
                       <v-col cols="12" sm="12" md="12" v-show="valida">
                         <div class="red--text" v-for="v in validaMensaje" :key="v" v-text="v"></div>
                       </v-col>
@@ -52,11 +58,49 @@
                 </v-card-actions>
               </v-card>
             </v-dialog> 
+             <!--el formulario que es para activar / desactivar -->
+            <v-dialog v-model="adModal" max-width="300px">
+              <v-card>
+                <v-card-title>
+                  <span class="headline" v-if="adAccion==0">Activar Item</span>
+                  <span class="headline" v-if="adAccion==1">Desactivar Item</span>
+                </v-card-title>
+
+                <v-card-text>
+                  Estás a punto de
+                  <span v-if="adAccion==0">Activar</span>
+                  <span v-if="adAccion==1">Desactivar</span>
+                  el item {{adNombre}}
+                </v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="green darken-1" text @click="activarDesactivaCerrar">Cancelar</v-btn>
+                  <v-btn color="blue darken-1" v-if="adAccion==0" text @click="activar">Activar</v-btn>
+                  <v-btn
+                    color="blue darken-1"
+                    v-if="adAccion==1"
+                    text
+                    @click="desactivar"
+                  >Desactivar</v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
           </v-toolbar>
         </template>
         <!--listar tabla -->
         <template v-slot:item.acciones="{ item }">
           <v-icon class="mr-2" @click="editItem(item)">edit</v-icon> 
+
+          <v-btn
+            class="mr-2"
+            @click="activarDesactiva(item.estado,item)"
+            :color="getEstadoC(item.estado)"
+            dark
+          >
+            <v-icon class="mr-2" @click="deleteItem(item)">thumbs_up_down</v-icon>
+            {{getEstado(item.estado)}}
+          </v-btn>
+
         </template>
         <!-- si no se encuentra ningun dato -->
         <template v-slot:no-data>
@@ -78,10 +122,14 @@ export default {
       headers: [
         { text: "accion", value: "acciones" }, 
         { text: "nombre", value: "nombre" }, 
+        { text: "campaña", value: "campaña" },
+        { text: "descripcion", value: "descripcion"},
       ],
       editedIndex: -1,
       _id: "",
       nombre: "", 
+      campaña: "",
+      descripcion: "",
       valida: 0,
       validaMensaje: [],
       adModal: 0,
@@ -125,6 +173,16 @@ export default {
         this.validaMensaje.push(
           "El nombre de la sede debe tener entre 1-50 caracteres"
         );
+      }
+      if (this.campaña.length < 1 || this.campaña.length > 50) {
+        this.validaMensaje.push(
+          "La campaña debe tener entre 1-50 caracteres"
+        );
+      }
+      if (this.descripcion.length < 1 || this.descripcion.length > 250) {
+        this.validaMensaje.push(
+          "La campaña debe tener entre 1-250 caracteres"
+        );
       } 
       if (this.validaMensaje.length) {
         this.valida = 1;
@@ -135,9 +193,65 @@ export default {
     editItem(item) {
       this._id = item._id;
       this.nombre = item.nombre; 
+      this.campaña = item.campaña;
+      this.descripcion = item.descripcion;
       this.dialog = true;
       this.editedIndex = 1;
     },  
+
+    activarDesactiva(accion, item) {
+      this.adModal = 1;
+      this.adNombre = item.nombre;
+      this.adId = item._id;
+      if (accion == 1) {
+        this.adAccion = 1;
+      } else if (accion == 0) {
+        this.adAccion = 0;
+      } else {
+        this.adModal = 0;
+      }
+    },
+    activarDesactivaCerrar() {
+      this.adModal = 0;
+    },
+    activar() {
+      let me = this;
+      //editar
+      axios
+        .put("servicio/activate", {
+          _id: this.adId,
+        })
+        .then(function (response) {
+          me.adModal = 0;
+          me.adAccion = 0;
+          me.adNombre = "";
+          me.adId = "";
+          me.listar();
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
+
+    desactivar() {
+      let me = this;
+      //editar
+      axios
+        .put("servicio/desactivate", {
+          _id: this.adId,
+        })
+        .then(function (response) {
+          me.adModal = 0;
+          me.adAccion = 0;
+          me.adNombre = "";
+          me.adId = "";
+          me.listar();
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
+
 
     close() {
       this.dialog = false;
@@ -149,6 +263,8 @@ export default {
     limpiar() {
       this._id = "";
       this.nombre = ""; 
+      this.campaña ="";
+      this.descripcion ="";
       this.valida = 0;
       this.validaMensaje = [];
       this.editedIndex = -1;
@@ -163,7 +279,9 @@ export default {
         axios
           .put("servicio/update", {
             _id: this._id,
-            nombre: this.nombre
+            nombre: this.nombre,
+            campaña: this.campaña,
+            descripcion: this.descripcion,
           })
           .then(function (response) {
             me.limpiar();
@@ -177,7 +295,9 @@ export default {
         //crear
         axios
           .post("servicio/add", {
-            nombre: this.nombre
+            nombre: this.nombre,
+            campaña: this.campaña,
+            descripcion: this.descripcion,
           })
           .then(function (response) {
             me.limpiar();
@@ -189,7 +309,15 @@ export default {
           });
       }
       this.close();
-    }
+    },
+    getEstadoC(estado) {
+      if (estado == 1) return "green";
+      else return "danger";
+    },
+    getEstado(estado) {
+      if (estado == 1) return "Activo";
+      else return "Inactivo";
+    },
   },
 };
 </script>
