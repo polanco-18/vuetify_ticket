@@ -29,7 +29,7 @@ var router = new VueRouter({
     name: 'AsigUsuario',
     component: AsigUsuario,
     meta:{
-      libre: true
+      administrador: true
     }
   },
   {

@@ -3,9 +3,9 @@
     <v-flex>
       <v-data-table
         :headers="headers"
-        :items="sedes"
+        :items="asignar"
         :search="search"
-        sort-by="nombre"
+        sort-by="usuario"
         class="elevation-1"
       >
         <template v-slot:top>
@@ -37,15 +37,27 @@
                 <v-card-text>
                   <v-container>
                     <v-row>
-                      <v-col cols="12" sm="12" md="12">
-                        <v-text-field v-model="nombre" label="Nombre" required></v-text-field>
+                      <v-col class="d-flex" cols="12" sm="12">
+                        <v-select
+                          :items="usuarios" 
+                          v-model="usuario"
+                          label="Seleccione usuario"
+                        ></v-select>
                       </v-col>
-                      <v-col cols="12" sm="12" md="12">
-                        <v-text-field v-model="pais" label="pais" required></v-text-field>
+                      <v-col class="d-flex" cols="12" sm="12">
+                        <v-select
+                          :items="sedes" 
+                          v-model="sede"
+                          label="Seleccione sede"
+                        ></v-select>
                       </v-col>
-                      <v-col cols="12" sm="12" md="12" v-show="valida">
-                        <div class="red--text" v-for="v in validaMensaje" :key="v" v-text="v"></div>
-                      </v-col>
+                      <v-col class="d-flex" cols="12" sm="12">
+                        <v-select
+                          :items="servicios" 
+                          v-model="servicio"
+                          label="Seleccione servicio"
+                        ></v-select>
+                      </v-col> 
                     </v-row>
                   </v-container>
                 </v-card-text>
@@ -55,49 +67,12 @@
                   <v-btn color="blue darken-1" text @click="guardar">Guardar</v-btn>
                 </v-card-actions>
               </v-card>
-            </v-dialog>
-            <!--el formulario que es para activar / desactivar -->
-            <v-dialog v-model="adModal" max-width="300px">
-              <v-card>
-                <v-card-title>
-                  <span class="headline" v-if="adAccion==0">Activar Item</span>
-                  <span class="headline" v-if="adAccion==1">Desactivar Item</span>
-                </v-card-title>
-
-                <v-card-text>
-                  Estás a punto de
-                  <span v-if="adAccion==0">Activar</span>
-                  <span v-if="adAccion==1">Desactivar</span>
-                  el item {{adNombre}}
-                </v-card-text>
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn color="green darken-1" text @click="activarDesactivaCerrar">Cancelar</v-btn>
-                  <v-btn color="blue darken-1" v-if="adAccion==0" text @click="activar">Activar</v-btn>
-                  <v-btn
-                    color="blue darken-1"
-                    v-if="adAccion==1"
-                    text
-                    @click="desactivar"
-                  >Desactivar</v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
+            </v-dialog> 
           </v-toolbar>
         </template>
         <!--listar tabla -->
         <template v-slot:item.acciones="{ item }">
-          <v-icon class="mr-2" @click="editItem(item)">edit</v-icon>
-
-          <v-btn
-            class="mr-2"
-            @click="activarDesactiva(item.estado,item)"
-            :color="getEstadoC(item.estado)"
-            dark
-          >
-            <v-icon class="mr-2" @click="deleteItem(item)">thumbs_up_down</v-icon>
-            {{getEstado(item.estado)}}
-          </v-btn>
+          <v-icon class="mr-2" @click="editItem(item)">edit</v-icon> 
         </template>
         <!-- si no se encuentra ningun dato -->
         <template v-slot:no-data>
@@ -115,22 +90,27 @@ export default {
     return {
       dialog: false,
       search: "",
+      asignar: [],
+      usuarios: [],
       sedes: [],
+      servicios: [],
       headers: [
-        { text: "acciones - estado", value: "acciones" },
-        //{ text: "estado ", value: "estado" },
-        { text: "nombre", value: "nombre" },
-        { text: "pais", value: "pais" },
+        { text: "acciones - estado", value: "acciones" }, 
+        { text: "usuario", value: "usuario.num_documento" },
+        { text: "sede", value: "sede.nombre" },
+        { text: "servicio", value: "servicio.nombre" },
+        { text: "estado", value: "atencion" },
       ],
       editedIndex: -1,
       _id: "",
-      nombre: "",
-      pais: "",
+      usuario: "",
+      sede: "",
+      servicio: "",
       valida: 0,
       validaMensaje: [],
       adModal: 0,
       adAccion: 0,
-      adNombre: "",
+      adusuario: "",
       adId: "",
     };
   },
@@ -148,15 +128,75 @@ export default {
 
   created() {
     this.listar();
+    this.selectUsuario();
+    this.selectSede();
+    this.selectServicio();
   },
 
   methods: {
-    listar() {
+    selectUsuario() {
       let me = this;
+      var usuarioArray = [];
+      axios
+        .get("usuario/list")
+        .then(function (response) {
+          usuarioArray = response.data;
+          usuarioArray.map(function (x) {
+            me.usuarios.push({
+              text:
+                x.num_documento + " - " + x.nombre + ", " + x.apellido_paterno + " " + x.apellido_materno,
+              value: x._id,
+            });
+          });
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
+    selectSede() {
+      let me = this;
+      var sedeArray = [];
       axios
         .get("sede/list")
         .then(function (response) {
-          me.sedes = response.data;
+          sedeArray = response.data;
+          sedeArray.map(function (x) {
+            me.sedes.push({
+              text:
+                x.nombre + " " + x.pais ,
+              value: x._id,
+            });
+          });
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
+    selectServicio() {
+      let me = this;
+      var servicioArray = [];
+      axios
+        .get("servicio/list")
+        .then(function (response) {
+          servicioArray = response.data;
+          servicioArray.map(function (x) {
+            me.servicios.push({
+              text:
+                x.nombre,
+              value: x._id,
+            });
+          });
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
+    listar() {
+      let me = this;
+      axios
+        .get("asigUsuario/list")
+        .then(function (response) {
+          me.asignar = response.data;
         })
         .catch(function (error) {
           console.log(error);
@@ -165,15 +205,14 @@ export default {
     validar() {
       this.valida = 0;
       this.validaMensaje = [];
-      if (this.nombre.length < 1 || this.nombre.length > 50) {
-        this.validaMensaje.push(
-          "El nombre de la sede debe tener entre 1-50 caracteres"
-        );
+      if (!this.usuario) {
+        this.validaMensaje.push("Seleccione una categoria");
       }
-      if (this.pais.length < 1 || this.pais.length > 50) {
-        this.validaMensaje.push(
-          "La pais de la sede debe tener entre 1-50 caracteres"
-        );
+      if (!this.sede) {
+        this.validaMensaje.push("Seleccione una sede");
+      }
+      if (!this.servicio) {
+        this.validaMensaje.push("Seleccione una servicio");
       }
       if (this.validaMensaje.length) {
         this.valida = 1;
@@ -183,15 +222,16 @@ export default {
 
     editItem(item) {
       this._id = item._id;
-      this.nombre = item.nombre;
-      this.pais = item.pais;
+      this.usuario = item.usuario;
+      this.sede = item.sede;
+      this.servicio = item.servicio;
       this.dialog = true;
       this.editedIndex = 1;
     },
 
     activarDesactiva(accion, item) {
       this.adModal = 1;
-      this.adNombre = item.nombre;
+      this.adusuario = item.usuario;
       this.adId = item._id;
       if (accion == 1) {
         this.adAccion = 1;
@@ -203,44 +243,8 @@ export default {
     },
     activarDesactivaCerrar() {
       this.adModal = 0;
-    },
-    activar() {
-      let me = this;
-      //editar
-      axios
-        .put("sede/activate", {
-          _id: this.adId,
-        })
-        .then(function (response) {
-          me.adModal = 0;
-          me.adAccion = 0;
-          me.adNombre = "";
-          me.adId = "";
-          me.listar();
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    },
-
-    desactivar() {
-      let me = this;
-      //editar
-      axios
-        .put("sede/desactivate", {
-          _id: this.adId,
-        })
-        .then(function (response) {
-          me.adModal = 0;
-          me.adAccion = 0;
-          me.adNombre = "";
-          me.adId = "";
-          me.listar();
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    },
+    }, 
+ 
 
     close() {
       this.dialog = false;
@@ -251,8 +255,9 @@ export default {
     },
     limpiar() {
       this._id = "";
-      this.nombre = "";
-      this.pais = "";
+      this.usuario = "";
+      this.sede = "";
+      this.servicio = "";
       this.valida = 0;
       this.validaMensaje = [];
       this.editedIndex = -1;
@@ -265,10 +270,10 @@ export default {
       if (this.editedIndex > -1) {
         //editar
         axios
-          .put("sede/update", {
+          .put("asigUsuario/update", {
             _id: this._id,
-            nombre: this.nombre,
-            pais: this.pais,
+            usuario: this.usuario,
+            sede: this.sede,
           })
           .then(function (response) {
             me.limpiar();
@@ -280,10 +285,16 @@ export default {
           });
       } else {
         //crear
+        
+            console.log(this.usuario);
+            console.log(this.sede);
+            console.log(this.servicio);
         axios
-          .post("sede/add", {
-            nombre: this.nombre,
-            pais: this.pais,
+          .post("asigUsuario/add", {
+            usuario: this.usuario,
+            sede: this.sede,
+            servicio: this.servicio,
+            atencion: "sin atender",
           })
           .then(function (response) {
             me.limpiar();
