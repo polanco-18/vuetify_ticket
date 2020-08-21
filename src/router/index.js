@@ -9,8 +9,7 @@ import Servicio from '../components/Servicio.vue'
 import Equipo from '../components/Equipo.vue'
 import Ticket from '../components/Ticket.vue'
 import Tipoticket from '../components/Tipoticket.vue'
-import AsigUsuario from '../components/AsigUsuario.vue'
-import AsigUsuarioC from '../components/AsigUsuarioC.vue'
+import AsigUsuario from '../components/AsigUsuario.vue' 
 import AsigTicketC from '../components/AsigTicketC.vue'
 
 Vue.use(VueRouter)
@@ -34,15 +33,7 @@ var router = new VueRouter({
       meta: {
         administrador: true
       }
-    },
-    {
-      path: '/AsigUsuarioC',
-      name: 'AsigUsuarioC',
-      component: AsigUsuarioC,
-      meta: {
-        cliente: true
-      }
-    },
+    }, 
     {
       path: '/AsigTicketC',
       name: 'AsigTicketC',

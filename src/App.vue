@@ -66,15 +66,7 @@
             </v-list-item-action>
             <v-list-item-title>Asignar Servicio</v-list-item-title>
           </v-list-item>
-        </template> 
-        <template v-if="esCliente">
-          <v-list-item :to="{name:'AsigUsuarioC'}">
-            <v-list-item-action>
-              <v-icon>supervised_user_circle</v-icon>
-            </v-list-item-action>
-            <v-list-item-title>Mis Servicios</v-list-item-title>
-          </v-list-item>
-        </template>
+        </template>  
         <template v-if="esCliente">
           <v-list-item :to="{name:'AsigTicketC'}">
             <v-list-item-action>
