@@ -119,8 +119,7 @@ export default {
       search: "",
       equipos: [],
       headers: [
-        { text: "acciones - estado", value: "acciones" },
-        //{ text: "estado ", value: "estado" },
+        { text: "acciones - estado", value: "acciones" }, 
         { text: "tipo", value: "tipo" },
         { text: "posesion", value: "posesion" },
       ],
@@ -155,8 +154,10 @@ export default {
   methods: {
     listar() {
       let me = this;
+      let header = { Token: this.$store.state.token };
+      let configuracion = { headers: header };
       axios
-        .get("equipo/list")
+        .get("equipo/list",configuracion)
         .then(function (response) {
           me.equipos = response.data;
         })
@@ -208,11 +209,13 @@ export default {
     },
     activar() {
       let me = this;
+      let header = { Token: this.$store.state.token };
+      let configuracion = { headers: header };
       //editar
       axios
         .put("equipo/activate", {
           _id: this.adId,
-        })
+        },configuracion)
         .then(function (response) {
           me.adModal = 0;
           me.adAccion = 0;
@@ -227,11 +230,13 @@ export default {
 
     desactivar() {
       let me = this;
+      let header = { Token: this.$store.state.token };
+      let configuracion = { headers: header };
       //editar
       axios
         .put("equipo/desactivate", {
           _id: this.adId,
-        })
+        },configuracion)
         .then(function (response) {
           me.adModal = 0;
           me.adAccion = 0;
@@ -262,6 +267,8 @@ export default {
     },
     guardar() {
       let me = this;
+      let header = { Token: this.$store.state.token };
+      let configuracion = { headers: header };
       if (this.validar()) {
         return;
       }
@@ -272,7 +279,7 @@ export default {
             _id: this._id,
             tipo: this.tipo,
             posesion: this.posesion,
-          })
+          },configuracion)
           .then(function (response) {
             me.limpiar();
             me.close();
@@ -287,7 +294,7 @@ export default {
           .post("equipo/add", {
             tipo: this.tipo,
             posesion: this.posesion,
-          })
+          },configuracion)
           .then(function (response) {
             me.limpiar();
             me.close();

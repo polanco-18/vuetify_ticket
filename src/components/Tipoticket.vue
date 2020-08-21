@@ -57,40 +57,11 @@
                 </v-card-actions>
               </v-card>
             </v-dialog>
-            <!--el formulario que es para activar / desactivar -->
-            <v-dialog v-model="adModal" max-width="300px">
-              <v-card>
-                <v-card-title>
-                  <span class="headline" v-if="adAccion==0">Activar Item</span>
-                  <span class="headline" v-if="adAccion==1">Desactivar Item</span>
-                </v-card-title>
-
-                <v-card-text>
-                  Estás a punto de
-                  <span v-if="adAccion==0">Activar</span>
-                  <span v-if="adAccion==1">Desactivar</span>
-                  el item {{adNombre}}
-                </v-card-text>
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn color="green darken-1" text @click="activarDesactivaCerrar">Cancelar</v-btn>
-                  <v-btn color="blue darken-1" v-if="adAccion==0" text @click="activar">Activar</v-btn>
-                  <v-btn
-                    color="blue darken-1"
-                    v-if="adAccion==1"
-                    text
-                    @click="desactivar"
-                  >Desactivar</v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
           </v-toolbar>
         </template>
         <!--listar tabla -->
         <template v-slot:item.acciones="{ item }">
           <v-icon class="mr-2" @click="editItem(item)">edit</v-icon>
-
-          
         </template>
         <!-- si no se encuentra ningun dato -->
         <template v-slot:no-data>
@@ -110,8 +81,7 @@ export default {
       search: "",
       sedes: [],
       headers: [
-        { text: "acciones", value: "acciones" },
-        //{ text: "estado ", value: "estado" },
+        { text: "acciones", value: "acciones" }, 
         { text: "nombre", value: "nombre" },
         { text: "descripcion", value: "descripcion" },
       ],
@@ -146,8 +116,10 @@ export default {
   methods: {
     listar() {
       let me = this;
+      let header = { "Token": this.$store.state.token };
+      let configuracion = { headers: header };
       axios
-        .get("tipoticket/list")
+        .get("tipoticket/list",configuracion)
         .then(function (response) {
           me.sedes = response.data;
         })
@@ -181,60 +153,6 @@ export default {
       this.dialog = true;
       this.editedIndex = 1;
     },
-
-    activarDesactiva(accion, item) {
-      this.adModal = 1;
-      this.adNombre = item.nombre;
-      this.adId = item._id;
-      if (accion == 1) {
-        this.adAccion = 1;
-      } else if (accion == 0) {
-        this.adAccion = 0;
-      } else {
-        this.adModal = 0;
-      }
-    },
-    activarDesactivaCerrar() {
-      this.adModal = 0;
-    },
-    activar() {
-      let me = this;
-      //editar
-      axios
-        .put("tipoticket/activate", {
-          _id: this.adId,
-        })
-        .then(function (response) {
-          me.adModal = 0;
-          me.adAccion = 0;
-          me.adNombre = "";
-          me.adId = "";
-          me.listar();
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    },
-
-    desactivar() {
-      let me = this;
-      //editar
-      axios
-        .put("tipoticket/desactivate", {
-          _id: this.adId,
-        })
-        .then(function (response) {
-          me.adModal = 0;
-          me.adAccion = 0;
-          me.adNombre = "";
-          me.adId = "";
-          me.listar();
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    },
-
     close() {
       this.dialog = false;
       this.limpiar();
@@ -253,6 +171,8 @@ export default {
     },
     guardar() {
       let me = this;
+      let header = { "Token": this.$store.state.token };
+      let configuracion = { headers: header };
       if (this.validar()) {
         return;
       }
@@ -263,7 +183,7 @@ export default {
             _id: this._id,
             nombre: this.nombre,
             descripcion: this.descripcion,
-          })
+          },configuracion)
           .then(function (response) {
             me.limpiar();
             me.close();
@@ -278,7 +198,7 @@ export default {
           .post("tipoticket/add", {
             nombre: this.nombre,
             descripcion: this.descripcion,
-          })
+          },configuracion)
           .then(function (response) {
             me.limpiar();
             me.close();
@@ -289,14 +209,6 @@ export default {
           });
       }
       this.close();
-    },
-    getEstadoC(estado) {
-      if (estado == 1) return "green";
-      else return "danger";
-    },
-    getEstado(estado) {
-      if (estado == 1) return "Activo";
-      else return "Inactivo";
     },
   },
 };

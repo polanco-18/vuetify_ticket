@@ -1,13 +1,7 @@
 <template>
   <v-layout align-start>
     <v-flex>
-      <v-data-table
-        :headers="headers"
-        :items="lista"
-        :search="search"
-        sort-by="usuario"
-        class="elevation-1"
-      >
+      <v-data-table :headers="headers" :items="lista" sort-by="estado" class="elevation-1">
         <template v-slot:top>
           <v-toolbar flat color="white">
             <!-- titulo -->
@@ -15,7 +9,39 @@
             <v-divider class="mx-4" inset vertical></v-divider>
             <v-spacer></v-spacer>
 
-            <!--el formulario que sirve para agregar / editar -->
+            <!--el formulario que sirve para editar -->
+            <v-dialog v-model="dialog2" max-width="700px">
+              <v-card>
+                <v-card-title>
+                  <span class="headline">Registrar Atencion ticket</span>
+                </v-card-title> 
+                <v-card-text>
+                  <v-container>
+                    <v-row>   
+                      <v-col cols="12" sm="12" md="12">
+                        <v-text-field v-model="descripcion" label="Descripcion"></v-text-field>
+                      </v-col> 
+                      <v-col class="d-flex" cols="12" sm="12">
+                        <v-select :items="selectEstado" v-model="estado" label="Estado"></v-select>
+                      </v-col> 
+                      <v-col cols="12" sm="12" md="12">
+                        <v-text-field v-model="comentario" label="Comentario"></v-text-field>
+                      </v-col> 
+                      <v-col cols="12" sm="12" md="12" v-show="valida">
+                        <div class="red--text" v-for="v in validaMensaje" :key="v" v-text="v"></div>
+                      </v-col> 
+                    </v-row>
+                  </v-container>
+                </v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn class="ma-2" tile dark color="secondary" @click="close2">Cancelar</v-btn>
+                  <v-btn class="ma-2" tile dark color="primary" @click="guardar2">Guardar</v-btn>
+                  <v-spacer></v-spacer>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+            <!--el formulario que sirve para agregar -->
             <v-dialog v-model="dialog" max-width="700px">
               <template v-slot:activator="{ on, attrs }">
                 <v-btn class="ma-2" tile dark color="primary" v-bind="attrs" v-on="on">Nuevo</v-btn>
@@ -28,6 +54,9 @@
                 <v-card-text>
                   <v-container>
                     <v-row>
+                      <v-col class="d-flex" cols="12" sm="12">
+                        <v-select :items="usuarios" v-model="usuario" label="Seleccione usuario"></v-select>
+                      </v-col>
                       <v-col class="d-flex" cols="6" sm="6">
                         <v-select
                           :items="tipoTickets"
@@ -73,6 +102,9 @@
           </v-toolbar>
         </template>
         <!-- si no se encuentra ningun dato -->
+        <template v-slot:item.acciones="{ item }">
+          <v-icon class="mr-2" @click="editItem(item)">addchart</v-icon>
+        </template>
         <template v-slot:no-data>
           <v-btn color="primary" @click="listar()">Resetear</v-btn>
         </template>
@@ -87,8 +119,15 @@ export default {
   data() {
     return {
       //ticket
+      selectEstado: ["En proceso", "Solucionado", "Cancelado"],
+      estado: "",
+      comentario: "",
       lista: [],
       dialog: false,
+      dialog2: false,
+      usuario: "",
+      propetario: this.$store.state.usuario.email,
+      usuarios: [],
       sede: "",
       sedes: [],
       servicio: "",
@@ -101,20 +140,20 @@ export default {
       anyDesk: "",
       teamViewer: "",
       teamViewerClave: "",
-      search: this.$store.state.usuario.email,
-      headers: [ 
+      headers: [
+        { text: "acciones", value: "acciones" },
         { text: "usuario", value: "usuario.email" },
-        { text: "estado", value: "estado" },  
+        { text: "estado", value: "estado" },
         { text: "sede", value: "sede.nombre" },
         { text: "servicio", value: "servicio.nombre" },
         { text: "tipoticket", value: "tipoticket.nombre" },
         { text: "equipo", value: "equipo.tipo" },
-        { text: "descripcion", value: "descripcion" }, 
-        { text: "hora", value: "hora" }, 
-        { text: "fecha", value: "fecha" }, 
-        { text: "anyDesk", value: "anyDesk" }, 
-        { text: "teamViewer", value: "teamViewer" }, 
-        { text: "teamViewerClave", value: "teamViewerClave" }, 
+        { text: "descripcion", value: "descripcion" },
+        { text: "hora", value: "hora" },
+        { text: "fecha", value: "fecha" },
+        { text: "anyDesk", value: "anyDesk" },
+        { text: "teamViewer", value: "teamViewer" },
+        { text: "teamViewerClave", value: "teamViewerClave" },
       ],
       editedIndex: -1,
       _id: "",
@@ -136,7 +175,7 @@ export default {
     dialog(val) {
       val || this.close();
     },
-  }, 
+  },
 
   created() {
     this.listar();
@@ -144,8 +183,36 @@ export default {
     this.selectServicio();
     this.selectTipoTicket();
     this.selectEquipo();
-  }, 
+    this.selectUsuario();
+  },
   methods: {
+    selectUsuario() {
+      let me = this;
+      let header = { Token: this.$store.state.token };
+      let configuracion = { headers: header };
+      var usuarioArray = [];
+      axios
+        .get("usuario/list",configuracion)
+        .then(function (response) {
+          usuarioArray = response.data;
+          usuarioArray.map(function (x) {
+            me.usuarios.push({
+              text:
+                x.num_documento +
+                " - " +
+                x.nombre +
+                ", " +
+                x.apellido_paterno +
+                " - " +
+                x.email,
+              value: x._id,
+            });
+          });
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    },
     selectEquipo() {
       let me = this;
       let header = { Token: this.$store.state.token };
@@ -242,6 +309,9 @@ export default {
     validar() {
       this.valida = 0;
       this.validaMensaje = [];
+      if (!this.usuario) {
+        this.validaMensaje.push("Seleccione un usuario");
+      }
       if (!this.tipoTicket) {
         this.validaMensaje.push("Seleccione un tipo ticket");
       }
@@ -260,9 +330,7 @@ export default {
         );
       }
       if (this.anyDesk.length < 1 || this.anyDesk.length > 20) {
-        this.validaMensaje.push(
-          "El anyDesk debe tener entre 1-20 caracteres"
-        );
+        this.validaMensaje.push("El anyDesk debe tener entre 1-20 caracteres");
       }
       if (this.teamViewer.length < 1 || this.teamViewer.length > 20) {
         this.validaMensaje.push(
@@ -291,6 +359,14 @@ export default {
         this.editedIndex = -1;
       });
     },
+    close2() {
+      this.limpiar();
+      this.dialog2 = false;
+      this.$nextTick(() => {
+        this.editedItem = Object.assign({}, this.defaultItem);
+        this.editedIndex = -1;
+      });
+    },
     limpiar() {
       this._id = "";
       this.usuario = "";
@@ -307,49 +383,97 @@ export default {
       this.validaMensaje = [];
       this.editedIndex = -1;
     },
+    limpiar2() {
+      this._id = "";
+      this.descripcion = "";
+      this.estado = "";
+      this.comentario = "";
+      this.valida = 0;
+      this.validaMensaje = [];
+      this.editedIndex = -1;
+    },
+
+    editItem(item) {
+      this._id = item._id;
+      this.comentario = item.comentario;
+      this.descripcion = item.descripcion;
+      this.estado = item.estado;
+      this.dialog2 = true;
+      this.editedIndex = 1;
+    },
     guardar() {
       let me = this;
       let header = { Token: this.$store.state.token };
       let configuracion = { headers: header };
       var hora = new Date();
       var m = hora.getMonth() + 1;
-      var mes = (m < 10) ? '0' + m : m;
+      var mes = m < 10 ? "0" + m : m;
       var min = hora.getMinutes() < 10 ? "0" + hora.getMinutes() : hora.getMinutes();
       var ho = hora.getHours() < 10 ? "0" + hora.getHours() : hora.getHours();
       var seg = hora.getSeconds() < 10 ? "0" + hora.getSeconds() : hora.getSeconds();
       if (this.validar()) {
         return;
-      }
-      axios
-        .post("ticket/add", {
-          usuario: this.$store.state.usuario._id,
-          tipoticket: this.tipoTicket,
-          equipo: this.equipo,
-          sede: this.sede,
-          servicio: this.servicio,
-          descripcion: this.descripcion,
+      } 
+        axios
+          .post("ticket/add", {
+            usuario: this.usuario,
+            tipoticket: this.tipoTicket,
+            equipo: this.equipo,
+            sede: this.sede,
+            servicio: this.servicio,
+            descripcion: this.descripcion,
             hora:
               ho+
               ":" +
               min +
               ":" +
               seg,
-          fecha:
-            hora.getDate() + "/" + mes + "/" + hora.getFullYear(),
-          anyDesk: this.anyDesk,
-          teamViewer: this.teamViewer,
-          teamViewerClave: this.teamViewerClave,
-          estado: "En proceso",
-        },configuracion)
-        .then(function (response) {
-          me.limpiar();
-          me.close();
-          me.listar();
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-      this.close();
+            fecha: hora.getDate() + "/" + mes + "/" + hora.getFullYear(),
+            anyDesk: this.anyDesk,
+            teamViewer: this.teamViewer,
+            teamViewerClave: this.teamViewerClave,
+            estado: "En proceso",
+          },configuracion)
+          .then(function (response) {
+            me.limpiar();
+            me.close();
+            me.listar();
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+        this.close(); 
+    },
+    guardar2() {
+      let me = this;
+      let header = { Token: this.$store.state.token };
+      let configuracion = { headers: header };
+      var hora = new Date();
+      var m = hora.getMonth() + 1;
+      var mes = m < 10 ? "0" + m : m; 
+        axios
+          .put("ticket/update", {
+            _id: this._id,
+            descripcion: this.descripcion,
+            comentario: this.comentario,
+            propetario: this.$store.state.usuario.email,
+            atencion:
+              hora.getHours() +
+              ":" +
+              hora.getMinutes() +
+              ":" +
+              hora.getSeconds()+" "+ hora.getDate() + "/" + mes + "/" + hora.getFullYear(), 
+            estado: this.estado,
+          },configuracion)
+          .then(function (response) {
+            me.limpiar2();
+            me.close2();
+            me.listar();
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+        this.close(); 
     },
   },
 };

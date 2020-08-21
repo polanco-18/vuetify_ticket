@@ -149,7 +149,7 @@ export default {
       dialog: false,
       search: "",
       usuarios: [],
-      selectRol: ["admin", "Coordinador", "cliente"],
+      selectRol: ["admin", "tecnico", "cliente"],
       selectTipoD: ["DNI", "Carnet Estranjeria"],
       headers: [
         { text: "acciones - estado", value: "acciones" },
@@ -210,8 +210,10 @@ export default {
   methods: {
     listar() {
       let me = this;
+      let header = { Token: this.$store.state.token };
+      let configuracion = { headers: header };
       axios
-        .get("usuario/list")
+        .get("usuario/list", configuracion)
         .then(function (response) {
           me.usuarios = response.data;
         })
@@ -293,11 +295,17 @@ export default {
     },
     activar() {
       let me = this;
+      let header = { Token: this.$store.state.token };
+      let configuracion = { headers: header };
       //editar
       axios
-        .put("usuario/activate", {
-          _id: this.adId,
-        })
+        .put(
+          "usuario/activate",
+          {
+            _id: this.adId,
+          },
+          configuracion
+        )
         .then(function (response) {
           me.adModal = 0;
           me.adAccion = 0;
@@ -312,11 +320,17 @@ export default {
 
     desactivar() {
       let me = this;
+      let header = { Token: this.$store.state.token };
+      let configuracion = { headers: header };
       //editar
       axios
-        .put("usuario/desactivate", {
-          _id: this.adId,
-        })
+        .put(
+          "usuario/desactivate",
+          {
+            _id: this.adId,
+          },
+          configuracion
+        )
         .then(function (response) {
           me.adModal = 0;
           me.adAccion = 0;
@@ -354,24 +368,30 @@ export default {
     },
     guardar() {
       let me = this;
+      let header = { Token: this.$store.state.token };
+      let configuracion = { headers: header };
       if (this.validar()) {
         return;
       }
       if (this.editedIndex > -1) {
         //editar
         axios
-          .put("usuario/update", {
-            _id: this._id,
-            nombre: this.nombre,
-            apellido_paterno: this.apellido_paterno,
-            apellido_materno: this.apellido_materno,
-            tipo_documento: this.tipo_documento,
-            telefono: this.telefono,
-            email: this.email,
-            password: this.password,
-            rol: this.rol,
-            num_documento: this.num_documento,
-          })
+          .put(
+            "usuario/update",
+            {
+              _id: this._id,
+              nombre: this.nombre,
+              apellido_paterno: this.apellido_paterno,
+              apellido_materno: this.apellido_materno,
+              tipo_documento: this.tipo_documento,
+              telefono: this.telefono,
+              email: this.email,
+              password: this.password,
+              rol: this.rol,
+              num_documento: this.num_documento,
+            },
+            configuracion
+          )
           .then(function (response) {
             me.limpiar();
             me.close();
@@ -383,17 +403,21 @@ export default {
       } else {
         //crear
         axios
-          .post("usuario/add", {
-            nombre: this.nombre,
-            apellido_paterno: this.apellido_paterno,
-            apellido_materno: this.apellido_materno,
-            tipo_documento: this.tipo_documento,
-            telefono: this.telefono,
-            email: this.email,
-            password: this.password,
-            rol: this.rol,
-            num_documento: this.num_documento,
-          })
+          .post(
+            "usuario/add",
+            {
+              nombre: this.nombre,
+              apellido_paterno: this.apellido_paterno,
+              apellido_materno: this.apellido_materno,
+              tipo_documento: this.tipo_documento,
+              telefono: this.telefono,
+              email: this.email,
+              password: this.password,
+              rol: this.rol,
+              num_documento: this.num_documento,
+            },
+            configuracion
+          )
           .then(function (response) {
             me.limpiar();
             me.close();

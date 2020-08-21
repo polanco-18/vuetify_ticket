@@ -32,14 +32,14 @@
               <v-card>
                 <v-card-title>
                   <span class="headline">{{ formTitle }}</span>
-                </v-card-title> 
+                </v-card-title>
                 <v-card-text>
                   <v-container>
                     <v-row>
                       <v-col cols="12" sm="12" md="12">
                         <v-text-field v-model="nombre" label="Nombre"></v-text-field>
-                      </v-col> 
-                       <v-col cols="12" sm="12" md="12">
+                      </v-col>
+                      <v-col cols="12" sm="12" md="12">
                         <v-text-field v-model="campaña" label="Campaña"></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="12" md="12">
@@ -58,8 +58,8 @@
                   <v-spacer></v-spacer>
                 </v-card-actions>
               </v-card>
-            </v-dialog> 
-             <!--el formulario que es para activar / desactivar -->
+            </v-dialog>
+            <!--el formulario que es para activar / desactivar -->
             <v-dialog v-model="adModal" max-width="300px">
               <v-card>
                 <v-card-title>
@@ -90,19 +90,18 @@
         </template>
         <!--listar tabla -->
         <template v-slot:item.acciones="{ item }">
-          <v-icon class="mr-2" @click="editItem(item)">edit</v-icon> 
+          <v-icon class="mr-2" @click="editItem(item)">edit</v-icon>
 
           <v-btn
-             class="ma-2" tile 
+            class="ma-2"
+            tile
             @click="activarDesactiva(item.estado,item)"
             :color="getEstadoC(item.estado)"
             dark
           >
-            <v-icon 
-             class="ma-2" tile @click="deleteItem(item)">thumbs_up_down</v-icon>
+            <v-icon class="ma-2" tile @click="deleteItem(item)">thumbs_up_down</v-icon>
             {{getEstado(item.estado)}}
           </v-btn>
-
         </template>
         <!-- si no se encuentra ningun dato -->
         <template v-slot:no-data>
@@ -122,14 +121,14 @@ export default {
       search: "",
       servicio: [],
       headers: [
-        { text: "accion", value: "acciones" }, 
-        { text: "nombre", value: "nombre" }, 
+        { text: "accion", value: "acciones" },
+        { text: "nombre", value: "nombre" },
         { text: "campaña", value: "campaña" },
-        { text: "descripcion", value: "descripcion"},
+        { text: "descripcion", value: "descripcion" },
       ],
       editedIndex: -1,
       _id: "",
-      nombre: "", 
+      nombre: "",
       campaña: "",
       descripcion: "",
       valida: 0,
@@ -159,8 +158,10 @@ export default {
   methods: {
     listar() {
       let me = this;
+      let header = { Token: this.$store.state.token };
+      let configuracion = { headers: header };
       axios
-        .get("servicio/list")
+        .get("servicio/list", configuracion)
         .then(function (response) {
           me.servicio = response.data;
         })
@@ -177,15 +178,13 @@ export default {
         );
       }
       if (this.campaña.length < 1 || this.campaña.length > 50) {
-        this.validaMensaje.push(
-          "La campaña debe tener entre 1-50 caracteres"
-        );
+        this.validaMensaje.push("La campaña debe tener entre 1-50 caracteres");
       }
       if (this.descripcion.length < 1 || this.descripcion.length > 250) {
         this.validaMensaje.push(
           "La descripcion debe tener entre 1-250 caracteres"
         );
-      } 
+      }
       if (this.validaMensaje.length) {
         this.valida = 1;
       }
@@ -194,12 +193,12 @@ export default {
 
     editItem(item) {
       this._id = item._id;
-      this.nombre = item.nombre; 
+      this.nombre = item.nombre;
       this.campaña = item.campaña;
       this.descripcion = item.descripcion;
       this.dialog = true;
       this.editedIndex = 1;
-    },  
+    },
 
     activarDesactiva(accion, item) {
       this.adModal = 1;
@@ -218,11 +217,17 @@ export default {
     },
     activar() {
       let me = this;
+      let header = { Token: this.$store.state.token };
+      let configuracion = { headers: header };
       //editar
       axios
-        .put("servicio/activate", {
-          _id: this.adId,
-        })
+        .put(
+          "servicio/activate",
+          {
+            _id: this.adId,
+          },
+          configuracion
+        )
         .then(function (response) {
           me.adModal = 0;
           me.adAccion = 0;
@@ -237,11 +242,17 @@ export default {
 
     desactivar() {
       let me = this;
+      let header = { Token: this.$store.state.token };
+      let configuracion = { headers: header };
       //editar
       axios
-        .put("servicio/desactivate", {
-          _id: this.adId,
-        })
+        .put(
+          "servicio/desactivate",
+          {
+            _id: this.adId,
+          },
+          configuracion
+        )
         .then(function (response) {
           me.adModal = 0;
           me.adAccion = 0;
@@ -254,7 +265,6 @@ export default {
         });
     },
 
-
     close() {
       this.limpiar();
       this.dialog = false;
@@ -265,27 +275,33 @@ export default {
     },
     limpiar() {
       this._id = "";
-      this.nombre = ""; 
-      this.campaña ="";
-      this.descripcion ="";
+      this.nombre = "";
+      this.campaña = "";
+      this.descripcion = "";
       this.valida = 0;
       this.validaMensaje = [];
       this.editedIndex = -1;
     },
     guardar() {
       let me = this;
+      let header = { Token: this.$store.state.token };
+      let configuracion = { headers: header };
       if (this.validar()) {
         return;
       }
       if (this.editedIndex > -1) {
         //editar
         axios
-          .put("servicio/update", {
-            _id: this._id,
-            nombre: this.nombre,
-            campaña: this.campaña,
-            descripcion: this.descripcion,
-          })
+          .put(
+            "servicio/update",
+            {
+              _id: this._id,
+              nombre: this.nombre,
+              campaña: this.campaña,
+              descripcion: this.descripcion,
+            },
+            configuracion
+          )
           .then(function (response) {
             me.limpiar();
             me.close();
@@ -297,11 +313,15 @@ export default {
       } else {
         //crear
         axios
-          .post("servicio/add", {
-            nombre: this.nombre,
-            campaña: this.campaña,
-            descripcion: this.descripcion,
-          })
+          .post(
+            "servicio/add",
+            {
+              nombre: this.nombre,
+              campaña: this.campaña,
+              descripcion: this.descripcion,
+            },
+            configuracion
+          )
           .then(function (response) {
             me.limpiar();
             me.close();

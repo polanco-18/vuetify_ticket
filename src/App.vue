@@ -12,7 +12,7 @@
           </v-list-item>
         </template>  
         <template>
-          <v-list-item :to="{name:'Home'}">
+          <v-list-item :to="{name:'home'}">
             <v-list-item-action>
               <v-icon>home</v-icon>
             </v-list-item-action>
@@ -59,14 +59,6 @@
             <v-list-item-title>Usuarios</v-list-item-title>
           </v-list-item>
         </template>
-        <template v-if="esAdministrador">
-          <v-list-item :to="{name:'AsigUsuario'}">
-            <v-list-item-action>
-              <v-icon>supervised_user_circle</v-icon>
-            </v-list-item-action>
-            <v-list-item-title>Asignar Servicio</v-list-item-title>
-          </v-list-item>
-        </template>  
         <template v-if="esCliente">
           <v-list-item :to="{name:'AsigTicketC'}">
             <v-list-item-action>
@@ -75,14 +67,14 @@
             <v-list-item-title>Mis Tickets</v-list-item-title>
           </v-list-item>
         </template>
-        <template v-if="esAdministrador">
-          <v-list-item :to="{name:'ticket'}">
+        <template v-if="esAdministrador || esTecnico">
+          <v-list-item :to="{name:'AsigTicket'}">
             <v-list-item-action>
               <v-icon>desktop_mac</v-icon>
             </v-list-item-action>
-            <v-list-item-title>Ticket</v-list-item-title>
+            <v-list-item-title>Tickets</v-list-item-title>
           </v-list-item>
-        </template>
+        </template> 
 
       </v-list>
     </v-navigation-drawer>
@@ -133,8 +125,8 @@ export default {
     esCliente(){
       return this.$store.state.usuario && this.$store.state.usuario.rol=='cliente';
     }, 
-    esCoordinador(){
-      return this.$store.state.usuario && this.$store.state.usuario.rol=='Coordinador';
+    esTecnico(){
+      return this.$store.state.usuario && this.$store.state.usuario.rol=='tecnico';
     }
   },
   created() {

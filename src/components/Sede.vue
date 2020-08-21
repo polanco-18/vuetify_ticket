@@ -155,8 +155,10 @@ export default {
   methods: {
     listar() {
       let me = this;
+      let header = { Token: this.$store.state.token };
+      let configuracion = { headers: header };
       axios
-        .get("sede/list")
+        .get("sede/list",configuracion)
         .then(function (response) {
           me.sedes = response.data;
         })
@@ -208,11 +210,13 @@ export default {
     },
     activar() {
       let me = this;
+      let header = { Token: this.$store.state.token };
+      let configuracion = { headers: header };
       //editar
       axios
         .put("sede/activate", {
           _id: this.adId,
-        })
+        },configuracion)
         .then(function (response) {
           me.adModal = 0;
           me.adAccion = 0;
@@ -227,11 +231,13 @@ export default {
 
     desactivar() {
       let me = this;
+      let header = { Token: this.$store.state.token };
+      let configuracion = { headers: header };
       //editar
       axios
         .put("sede/desactivate", {
           _id: this.adId,
-        })
+        },configuracion)
         .then(function (response) {
           me.adModal = 0;
           me.adAccion = 0;
@@ -262,6 +268,8 @@ export default {
     },
     guardar() {
       let me = this;
+      let header = { Token: this.$store.state.token };
+      let configuracion = { headers: header };
       if (this.validar()) {
         return;
       }
@@ -272,7 +280,7 @@ export default {
             _id: this._id,
             nombre: this.nombre,
             pais: this.pais,
-          })
+          },configuracion)
           .then(function (response) {
             me.limpiar();
             me.close();
@@ -287,7 +295,7 @@ export default {
           .post("sede/add", {
             nombre: this.nombre,
             pais: this.pais,
-          })
+          },configuracion)
           .then(function (response) {
             me.limpiar();
             me.close();

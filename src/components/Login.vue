@@ -8,6 +8,7 @@
 
         <v-card-text>
           <v-container>
+            <img src="<%= BASE_URL %>Konecta.jpeg" alt="">
             <v-row>
               <v-col cols="12" sm="12" md="12">
                 <v-text-field autofocus label="Email" v-model="email" required></v-text-field>
@@ -62,13 +63,19 @@ export default {
         })
         .then((data) => {
           this.$store.dispatch("guardarToken", data.tokenReturn);
-          this.$router.push({ name: "Home" });
+          this.$router.push({ name: "home" });
         })
         .catch((error) => {
           this.errorM = null;
           if (error.response.status == 404) {
             this.errorM =
-              "No existe el usuario o las credenciales son incorrectas";
+              "Contraseña incorrecta";
+          }else if (error.response.status == 400) {
+            this.errorM =
+              "cuenta desactivada";
+          }else if (error.response.status == 401) {
+            this.errorM =
+              "No existe usuario";
           } else {
             this.errorM = "Ocurrio un error con el servidor";
           }

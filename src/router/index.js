@@ -1,16 +1,15 @@
 import Vue from 'vue'
-import store from '../store'
 import VueRouter from 'vue-router'
+import store from '../store'
 import Home from '../views/Home.vue'
 import Sede from '../components/Sede.vue'
 import Login from '../components/Login.vue'
 import Usuario from '../components/Usuario.vue'
 import Servicio from '../components/Servicio.vue'
-import Equipo from '../components/Equipo.vue'
-import Ticket from '../components/Ticket.vue'
-import Tipoticket from '../components/Tipoticket.vue'
-import AsigUsuario from '../components/AsigUsuario.vue' 
+import Equipo from '../components/Equipo.vue' 
+import Tipoticket from '../components/Tipoticket.vue'  
 import AsigTicketC from '../components/AsigTicketC.vue'
+import AsigTicket from '../components/AsigTicket.vue' 
 
 Vue.use(VueRouter)
 //se agregan las rutas para las vistas amigables, declaran su ruta de su crud
@@ -19,19 +18,22 @@ var router = new VueRouter({
   base: process.env.BASE_URL,
   routes: [
     {
-      path: '/Home',
-      name: 'Home',
+      path: '/',
+      name: 'home',
       component: Home,
       meta: {
-        libre: true
+        administrador: true,
+        tecnico: true,
+        cliente: true
       }
-    },
+    }, 
     {
-      path: '/AsigUsuario',
-      name: 'AsigUsuario',
-      component: AsigUsuario,
+      path: '/AsigTicket',
+      name: 'AsigTicket',
+      component: AsigTicket,
       meta: {
-        administrador: true
+        administrador: true,
+        tecnico: true
       }
     }, 
     {
@@ -57,15 +59,7 @@ var router = new VueRouter({
       meta: {
         administrador: true
       }
-    },
-    {
-      path: '/ticket',
-      name: 'ticket',
-      component: Ticket,
-      meta: {
-        administrador: true
-      }
-    },
+    }, 
     {
       path: '/tipoticket',
       name: 'tipoticket',
@@ -100,7 +94,7 @@ var router = new VueRouter({
     }
   ]
 
-});
+})
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.libre)) {
     next();
@@ -108,8 +102,8 @@ router.beforeEach((to, from, next) => {
     if (to.matched.some(record => record.meta.administrador)) {
       next();
     }
-  } else if (store.state.usuario && store.state.usuario.rol == 'coordinador') {
-    if (to.matched.some(record => record.meta.coordinador)) {
+  } else if (store.state.usuario && store.state.usuario.rol == 'tecnico') {
+    if (to.matched.some(record => record.meta.tecnico)) {
       next();
     }
   } else if (store.state.usuario && store.state.usuario.rol == 'cliente') {
@@ -119,6 +113,6 @@ router.beforeEach((to, from, next) => {
   } else {
     next({ name: 'login' });
   }
-});
+})
 
 export default router
