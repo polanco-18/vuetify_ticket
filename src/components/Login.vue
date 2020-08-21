@@ -2,7 +2,7 @@
   <v-layout align-center justify-center>
     <v-flex xs="12" sm="8" md="6" lg="5" xl="4">
       <v-card max-width="500" class="mx-auto">
-        <v-toolbar dark color="blue darken-3">
+        <v-toolbar dark color="primary">
           <span class="headline">Acceso al sistema</span>
         </v-toolbar>
 
@@ -27,8 +27,10 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" @click="ingresar()">Ingresar</v-btn>
+          <v-btn class="ma-2" tile dark color="primary" @click="ingresar()">Ingresar</v-btn>
+          <v-spacer></v-spacer>
         </v-card-actions>
+        <br />
       </v-card>
     </v-flex>
   </v-layout>
@@ -45,6 +47,14 @@ export default {
   },
   methods: {
     ingresar() {
+      if (this.email.length < 1 || this.email.length > 200) {
+        this.errorM = "Ingrese email";
+        return;
+      }
+      if (this.password.length < 1 || this.password.length > 20) {
+        this.errorM = "Ingrese password";
+        return;
+      }
       axios
         .post("usuario/login", { email: this.email, password: this.password })
         .then((respuesta) => {
@@ -52,7 +62,7 @@ export default {
         })
         .then((data) => {
           this.$store.dispatch("guardarToken", data.tokenReturn);
-          this.$router.push({ name: "home" });
+          this.$router.push({ name: "Home" });
         })
         .catch((error) => {
           this.errorM = null;

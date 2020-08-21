@@ -27,7 +27,7 @@
             <!--el formulario que sirve para agregar / editar -->
             <v-dialog v-model="dialog" max-width="700px">
               <template v-slot:activator="{ on, attrs }">
-                <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on">Nuevo</v-btn>
+                <v-btn class="ma-2" tile dark color="primary" v-bind="attrs" v-on="on">Nuevo</v-btn>
               </template>
               <v-card>
                 <v-card-title>
@@ -51,8 +51,9 @@
                 </v-card-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn color="blue darken-1" text @click="close">Cancelar</v-btn>
-                  <v-btn color="blue darken-1" text @click="guardar">Guardar</v-btn>
+                  <v-btn class="ma-2" tile dark color="secondary" @click="close">Cancelar</v-btn>
+                  <v-btn class="ma-2" tile dark color="primary" @click="guardar">Guardar</v-btn>
+                  <v-spacer></v-spacer>
                 </v-card-actions>
               </v-card>
             </v-dialog>
@@ -90,12 +91,13 @@
           <v-icon class="mr-2" @click="editItem(item)">edit</v-icon>
 
           <v-btn
-            class="mr-2"
+             class="ma-2" tile 
             @click="activarDesactiva(item.estado,item)"
             :color="getEstadoC(item.estado)"
             dark
           >
-            <v-icon class="mr-2" @click="deleteItem(item)">thumbs_up_down</v-icon>
+            <v-icon 
+             class="ma-2" tile  @click="deleteItem(item)">thumbs_up_down</v-icon>
             {{getEstado(item.estado)}}
           </v-btn>
         </template>
@@ -165,14 +167,14 @@ export default {
     validar() {
       this.valida = 0;
       this.validaMensaje = [];
-      if (this.tipo.length < 1 || this.tipo.length > 20) {
+      if (this.tipo.length < 1 || this.tipo.length > 30) {
         this.validaMensaje.push(
-          "El valor ingresado debe tener entre 1-20 caracteres!"
+          "El valor ingresado debe tener entre 1-30 caracteres!"
         );
       }
-      if (this.posesion.length < 1 || this.posesion.length > 50) {
+      if (this.posesion.length < 1 || this.posesion.length > 60) {
         this.validaMensaje.push(
-          "El valor ingresado debe tener entre 1-20 caracteres!"
+          "El valor ingresado debe tener entre 1-60 caracteres!"
         );
       }
       if (this.validaMensaje.length) {

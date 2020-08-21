@@ -3,8 +3,16 @@
     <!-- aca dentro va el codigo html -->
     <v-navigation-drawer v-model="drawer" :clipped="$vuetify.breakpoint.lgAndUp"  v-if="logueado" app>
       <v-list dense>
-        <template v-if="esAdministrador">
-          <v-list-item :to="{name:'home'}">
+        <template>
+          <v-list-item>
+            <v-list-item-action>
+              <v-icon>person</v-icon>
+            </v-list-item-action>
+            <v-list-item-title>{{this.$store.state.usuario.email}}</v-list-item-title>
+          </v-list-item>
+        </template>  
+        <template>
+          <v-list-item :to="{name:'Home'}">
             <v-list-item-action>
               <v-icon>home</v-icon>
             </v-list-item-action>
@@ -28,6 +36,14 @@
           </v-list-item>
         </template>
         <template v-if="esAdministrador">
+          <v-list-item :to="{name:'tipoticket'}">
+            <v-list-item-action>
+              <v-icon>confirmation_number</v-icon>
+            </v-list-item-action>
+            <v-list-item-title>TipoTicket</v-list-item-title>
+          </v-list-item>
+        </template>
+        <template v-if="esAdministrador">
           <v-list-item :to="{name:'servicio'}">
             <v-list-item-action>
               <v-icon>design_services</v-icon>
@@ -40,7 +56,7 @@
             <v-list-item-action>
               <v-icon>person</v-icon>
             </v-list-item-action>
-            <v-list-item-title>Usuario</v-list-item-title>
+            <v-list-item-title>Usuarios</v-list-item-title>
           </v-list-item>
         </template>
         <template v-if="esAdministrador">
@@ -48,7 +64,23 @@
             <v-list-item-action>
               <v-icon>supervised_user_circle</v-icon>
             </v-list-item-action>
-            <v-list-item-title>Asignar Usuario</v-list-item-title>
+            <v-list-item-title>Asignar Servicio</v-list-item-title>
+          </v-list-item>
+        </template> 
+        <template v-if="esCliente">
+          <v-list-item :to="{name:'AsigUsuarioC'}">
+            <v-list-item-action>
+              <v-icon>supervised_user_circle</v-icon>
+            </v-list-item-action>
+            <v-list-item-title>Mis Servicios</v-list-item-title>
+          </v-list-item>
+        </template>
+        <template v-if="esCliente">
+          <v-list-item :to="{name:'AsigTicketC'}">
+            <v-list-item-action>
+              <v-icon>addchart</v-icon>
+            </v-list-item-action>
+            <v-list-item-title>Mis Tickets</v-list-item-title>
           </v-list-item>
         </template>
         <template v-if="esAdministrador">
@@ -59,22 +91,14 @@
             <v-list-item-title>Ticket</v-list-item-title>
           </v-list-item>
         </template>
-        <template v-if="esAdministrador">
-          <v-list-item :to="{name:'tipoticket'}">
-            <v-list-item-action>
-              <v-icon>confirmation_number</v-icon>
-            </v-list-item-action>
-            <v-list-item-title>TipoTicket</v-list-item-title>
-          </v-list-item>
-        </template>
 
       </v-list>
     </v-navigation-drawer>
 
-    <v-app-bar :clipped-left="$vuetify.breakpoint.lgAndUp" app color="blue darken-3" dark>
+    <v-app-bar :clipped-left="$vuetify.breakpoint.lgAndUp" app color="primary" dark>
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       <v-toolbar-title style="width: 300px" class="ml-0 pl-4">
-        <span class="hidden-sm-and-down"><v-icon>desktop_windows</v-icon> TicketMaster</span>
+        <span class="hidden-sm-and-down font-weight-black"> | Konecta </span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn  @click="salir()" icon v-if="logueado">
@@ -91,9 +115,10 @@
     </v-main>
     <!--footer-->
 
-   <v-footer>
+   <v-footer color="secondary">
       <v-spacer></v-spacer>
-      <div>&copy; {{ new Date().getFullYear() }}</div>
+      <div>&copy; {{ new Date().getFullYear() }} <strong  class="white--text" > | Konecta</strong></div>
+      <v-spacer></v-spacer>
     </v-footer>
   </v-app>
 </template>
@@ -103,15 +128,21 @@ export default {
   name: "App",
   data() {
     return {
-      drawer: true,
+      drawer: true, 
     };
   },
   computed: {
-    logueado(){
-      return this.$store.state.usuario;
+    logueado(){  
+      return this.$store.state.usuario;    
     },
     esAdministrador(){
       return this.$store.state.usuario && this.$store.state.usuario.rol=='admin';
+    }, 
+    esCliente(){
+      return this.$store.state.usuario && this.$store.state.usuario.rol=='cliente';
+    }, 
+    esCoordinador(){
+      return this.$store.state.usuario && this.$store.state.usuario.rol=='Coordinador';
     }
   },
   created() {

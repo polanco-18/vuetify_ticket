@@ -30,7 +30,7 @@ export default new Vuex.Store({
         commit("setToken", token);
         commit("setUsuario", decode(token));
       }
-      router.push({ name: 'home' });
+      router.push({ name: 'Home' });
     },
     salir({ commit }) {
       commit("setToken", null);

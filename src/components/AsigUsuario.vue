@@ -27,7 +27,7 @@
             <!--el formulario que sirve para agregar / editar -->
             <v-dialog v-model="dialog" max-width="700px">
               <template v-slot:activator="{ on, attrs }">
-                <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on">Nuevo</v-btn>
+                <v-btn class="ma-2" tile dark color="primary" v-bind="attrs" v-on="on">Nuevo</v-btn>
               </template>
               <v-card>
                 <v-card-title>
@@ -63,8 +63,9 @@
                 </v-card-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn color="blue darken-1" text @click="close">Cancelar</v-btn>
-                  <v-btn color="blue darken-1" text @click="guardar">Guardar</v-btn>
+                  <v-btn class="ma-2" tile dark color="secondary" @click="close">Cancelar</v-btn>
+                  <v-btn class="ma-2" tile dark color="primary" @click="guardar">Guardar</v-btn>
+                  <v-spacer></v-spacer>
                 </v-card-actions>
               </v-card>
             </v-dialog> 
@@ -73,6 +74,7 @@
         <!--listar tabla -->
         <template v-slot:item.acciones="{ item }">
           <v-icon class="mr-2" @click="editItem(item)">edit</v-icon> 
+          <v-icon class="mr-2" @click="editItem(item)">add_to_queue</v-icon> 
         </template>
         <!-- si no se encuentra ningun dato -->
         <template v-slot:no-data>
@@ -98,8 +100,7 @@ export default {
         { text: "acciones - estado", value: "acciones" }, 
         { text: "usuario", value: "usuario.num_documento" },
         { text: "sede", value: "sede.nombre" },
-        { text: "servicio", value: "servicio.nombre" },
-        { text: "estado", value: "atencion" },
+        { text: "servicio", value: "servicio.nombre" }, 
       ],
       editedIndex: -1,
       _id: "",

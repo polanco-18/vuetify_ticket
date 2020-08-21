@@ -1,19 +1,8 @@
 <template>
   <v-layout align-center> 
-  <div class="home mx-auto">
+  <div class="mx-auto">
     <h1 class="primary--text">Bienvenido al sistema</h1>
+    <h2 class="secondary--text">¡ <strong>{{this.$store.state.usuario.email}}</strong> !</h2>
   </div>
   </v-layout>
-</template>
-
-<script>
-// @ is an alias to /src
-import HelloWorld from "@/components/HelloWorld.vue";
-
-export default {
-  name: "Home",
-  components: {
-    HelloWorld,
-  },
-};
-</script>
+</template> 
