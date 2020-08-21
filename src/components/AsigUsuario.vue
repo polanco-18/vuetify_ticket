@@ -32,8 +32,7 @@
               <v-card>
                 <v-card-title>
                   <span class="headline">{{ formTitle }}</span>
-                </v-card-title>
-
+                </v-card-title> 
                 <v-card-text>
                   <v-container>
                     <v-row>
@@ -73,8 +72,7 @@
         </template>
         <!--listar tabla -->
         <template v-slot:item.acciones="{ item }">
-          <v-icon class="mr-2" @click="editItem(item)">edit</v-icon> 
-          <v-icon class="mr-2" @click="editItem(item)">add_to_queue</v-icon> 
+          <v-icon class="mr-2" @click="editItem(item)">edit</v-icon>  
         </template>
         <!-- si no se encuentra ningun dato -->
         <template v-slot:no-data>
@@ -98,7 +96,7 @@ export default {
       servicios: [],
       headers: [
         { text: "acciones - estado", value: "acciones" }, 
-        { text: "usuario", value: "usuario.num_documento" },
+        { text: "usuario", value: "usuario.email" },
         { text: "sede", value: "sede.nombre" },
         { text: "servicio", value: "servicio.nombre" }, 
       ],
@@ -145,7 +143,7 @@ export default {
           usuarioArray.map(function (x) {
             me.usuarios.push({
               text:
-                x.num_documento + " - " + x.nombre + ", " + x.apellido_paterno + " " + x.apellido_materno,
+                x.num_documento + " - " + x.nombre + ", " + x.apellido_paterno + " " + x.apellido_materno+ " - " + x.email,
               value: x._id,
             });
           });
@@ -195,7 +193,7 @@ export default {
     listar() {
       let me = this;
       axios
-        .get("asigUsuario/list")
+        .get("asigUsuario/listCliente")
         .then(function (response) {
           me.asignar = response.data;
         })
@@ -222,10 +220,10 @@ export default {
     },
 
     editItem(item) {
-      this._id = item._id;
-      this.usuario = item.usuario;
-      this.sede = item.sede;
-      this.servicio = item.servicio;
+      this._id = item._id; 
+      this.usuario = item.usuario.email;  
+      this.sede = item.sede.nombre;
+      this.servicio = item.servicio.nombre;
       this.dialog = true;
       this.editedIndex = 1;
     },
@@ -248,6 +246,7 @@ export default {
  
 
     close() {
+      this.limpiar();
       this.dialog = false;
       this.$nextTick(() => {
         this.editedItem = Object.assign({}, this.defaultItem);

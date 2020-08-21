@@ -24,7 +24,7 @@
             <v-spacer></v-spacer>
             <!--dialogo agregar / editar -->
             <v-dialog v-model="dialog" max-width="700px">
-              <template v-slot:activator="{ on, attrs }"> 
+              <template v-slot:activator="{ on, attrs }">
                 <v-btn class="ma-2" tile dark color="primary" v-bind="attrs" v-on="on">Nuevo</v-btn>
               </template>
               <v-card>
@@ -35,33 +35,33 @@
                 <v-card-text>
                   <v-container>
                     <v-row>
-                      <v-col class="d-flex" cols="12" sm="12">
+                      <v-col class="d-flex" cols="6" sm="6">
                         <v-select
                           :items="selectTipoD"
                           v-model="tipo_documento"
                           label="Tipo de documento"
                         ></v-select>
                       </v-col>
-                      <v-col cols="12" sm="12" md="12">
-                        <v-text-field v-model="num_documento" label="N° de documento" required></v-text-field>
+                      <v-col cols="6" sm="6" md="6">
+                        <v-text-field v-model="num_documento" label="N° de documento"></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="12" md="12">
-                        <v-text-field v-model="nombre" label="Nombre" required></v-text-field>
+                        <v-text-field v-model="nombre" label="Nombre"></v-text-field>
                       </v-col>
-                      <v-col cols="12" sm="12" md="12">
-                        <v-text-field v-model="apellido_paterno" label="Apellido Paterno" required></v-text-field>
+                      <v-col cols="6" sm="6" md="6">
+                        <v-text-field v-model="apellido_paterno" label="Apellido Paterno"></v-text-field>
                       </v-col>
-                      <v-col cols="12" sm="12" md="12">
-                        <v-text-field v-model="apellido_materno" label="Apellido Materno" required></v-text-field>
+                      <v-col cols="6" sm="6" md="6">
+                        <v-text-field v-model="apellido_materno" label="Apellido Materno"></v-text-field>
                       </v-col>
-                      <v-col class="d-flex" cols="12" sm="12">
+                      <v-col class="d-flex" cols="6" sm="6">
                         <v-select :items="selectRol" v-model="rol" label="Rol"></v-select>
                       </v-col>
-                      <v-col cols="12" sm="12" md="12">
-                        <v-text-field v-model="email" :rules="emailRules" label="correo" required></v-text-field>
+                      <v-col cols="6" sm="6" md="6">
+                        <v-text-field v-model="telefono" label="telefono"></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="12" md="12">
-                        <v-text-field v-model="telefono" label="telefono" required></v-text-field>
+                        <v-text-field v-model="email" :rules="emailRules" label="correo"></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="12" md="12">
                         <v-text-field
@@ -78,11 +78,6 @@
                       </v-col>
                       <v-col cols="12" sm="12" md="12" v-show="valida">
                         <div class="red--text" v-for="v in validaMensaje" :key="v" v-text="v"></div>
-                      </v-col>
-                      <v-col cols="12" sm="12" md="12" v-show="valida">
-                        <v-col class="d-flex" cols="12" sm="6">
-                          <v-select label="Standard"></v-select>
-                        </v-col>
                       </v-col>
                     </v-row>
                   </v-container>
@@ -127,13 +122,13 @@
         <template v-slot:item.acciones="{ item }">
           <v-icon class="mr-2" @click="editItem(item)">edit</v-icon>
           <v-btn
-             class="ma-2" tile 
+            class="ma-2"
+            tile
             @click="activarDesactiva(item.estado,item)"
             :color="getEstadoC(item.estado)"
             dark
           >
-            <v-icon 
-             class="ma-2" tile  @click="deleteItem(item)">thumbs_up_down</v-icon>
+            <v-icon class="ma-2" tile @click="deleteItem(item)">thumbs_up_down</v-icon>
             {{getEstado(item.estado)}}
           </v-btn>
         </template>
@@ -227,6 +222,14 @@ export default {
     validar() {
       this.valida = 0;
       this.validaMensaje = [];
+      if (!this.tipo_documento) {
+        this.validaMensaje.push("Seleccione tipo de documento");
+      }
+      if (this.num_documento.length < 1 || this.num_documento.length > 15) {
+        this.validaMensaje.push(
+          "El numero de documento debe tener entre 1-15 caracteres"
+        );
+      }
       if (this.nombre.length < 1 || this.nombre.length > 50) {
         this.validaMensaje.push(
           "El nombre de la usuario debe tener entre 1-50 caracteres"
@@ -237,8 +240,22 @@ export default {
         this.apellido_paterno.length > 50
       ) {
         this.validaMensaje.push(
-          "La apellido de la usuario debe tener entre 1-50 caracteres"
+          "El apellido paterno debe tener entre 1-50 caracteres"
         );
+      }
+      if (
+        this.apellido_materno.length < 1 ||
+        this.apellido_materno.length > 50
+      ) {
+        this.validaMensaje.push(
+          "El apellido materno de la usuario debe tener entre 1-50 caracteres"
+        );
+      }
+      if (!this.rol) {
+        this.validaMensaje.push("Seleccione rol");
+      }
+      if (this.password.length < 1 || this.password.length > 50) {
+        this.validaMensaje.push("Ingrese contraseña");
       }
       if (this.validaMensaje.length) {
         this.valida = 1;
@@ -246,9 +263,11 @@ export default {
       return this.valida;
     },
     editItem(item) {
+      this.limpiar();
       this._id = item._id;
       this.nombre = item.nombre;
       this.apellido_materno = item.apellido_materno;
+      this.apellido_paterno = item.apellido_paterno;
       this.num_documento = item.num_documento;
       this.tipo_documento = item.tipo_documento;
       this.telefono = item.telefono;
@@ -311,6 +330,7 @@ export default {
     },
 
     close() {
+      this.limpiar();
       this.dialog = false;
       this.$nextTick(() => {
         this.editedItem = Object.assign({}, this.defaultItem);
@@ -320,7 +340,14 @@ export default {
     limpiar() {
       this._id = "";
       this.nombre = "";
-      this.apellido = "";
+      this.apellido_paterno = "";
+      this.apellido_materno = "";
+      this.tipo_documento = "";
+      this.telefono = "";
+      this.email = "";
+      this.password = "";
+      this.rol = "";
+      this.num_documento = "";
       this.valida = 0;
       this.validaMensaje = [];
       this.editedIndex = -1;
@@ -374,6 +401,7 @@ export default {
           })
           .catch(function (error) {
             console.log(error);
+            me.validaMensaje.push("Error ");
           });
       }
       this.close();

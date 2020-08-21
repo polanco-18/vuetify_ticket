@@ -66,16 +66,16 @@
                         <v-select :items="equipos" v-model="equipo" label="Seleccione Equipo"></v-select>
                       </v-col>
                       <v-col cols="12" sm="12" md="12">
-                        <v-text-field v-model="descripcion" label="Descripcion" required></v-text-field>
+                        <v-text-field v-model="descripcion" label="Descripcion"></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="12" md="12">
-                        <v-text-field v-model="anyDesk" label="anyDesk" required></v-text-field>
+                        <v-text-field v-model="anyDesk" label="anyDesk"></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="12" md="12">
-                        <v-text-field v-model="teamViewer" label="teamViewer" required></v-text-field>
+                        <v-text-field v-model="teamViewer" label="teamViewer"></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="12" md="12">
-                        <v-text-field v-model="teamViewerClave" label="teamViewer clave" required></v-text-field>
+                        <v-text-field v-model="teamViewerClave" label="teamViewer clave"></v-text-field>
                       </v-col>
                     </v-row>
                   </v-container>
@@ -332,6 +332,7 @@ export default {
       this.editedIndex = 1;
     },
     close() {
+      this.limpiar();
       this.dialog = false;
       this.$nextTick(() => {
         this.editedItem = Object.assign({}, this.defaultItem);
@@ -339,6 +340,7 @@ export default {
       });
     },
     close2() {
+      this.limpiar();
       this.dialog2 = false;
       this.$nextTick(() => {
         this.editedItem = Object.assign({}, this.defaultItem);

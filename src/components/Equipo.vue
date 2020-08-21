@@ -38,10 +38,10 @@
                   <v-container>
                     <v-row>
                       <v-col cols="12" sm="12" md="12">
-                        <v-text-field v-model="tipo" label="Tipo" required></v-text-field>
+                        <v-text-field v-model="tipo" label="Tipo"></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="12" md="12">
-                        <v-text-field v-model="posesion" label="Posesion" required></v-text-field>
+                        <v-text-field v-model="posesion" label="Posesion"></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="12" md="12" v-show="valida">
                         <div class="red--text" v-for="v in validaMensaje" :key="v" v-text="v"></div>
@@ -245,6 +245,7 @@ export default {
     },
 
     close() {
+      this.limpiar();
       this.dialog = false;
       this.$nextTick(() => {
         this.editedItem = Object.assign({}, this.defaultItem);
