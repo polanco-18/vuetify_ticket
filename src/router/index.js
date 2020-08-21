@@ -8,6 +8,7 @@ import Usuario from '../components/Usuario.vue'
 import Servicio from '../components/Servicio.vue'
 import Equipo from '../components/Equipo.vue'
 import Ticket from '../components/Ticket.vue'
+import Tipoticket from '../components/Tipoticket.vue'
 import AsigUsuario from '../components/AsigUsuario.vue'
 
 Vue.use(VueRouter)
@@ -52,6 +53,14 @@ var router = new VueRouter({
     path: '/ticket',
     name: 'ticket',
     component: Ticket,
+    meta:{
+      administrador: true 
+    }
+  },
+  {
+    path: '/tipoticket',
+    name: 'tipoticket',
+    component: Tipoticket,
     meta:{
       administrador: true 
     }

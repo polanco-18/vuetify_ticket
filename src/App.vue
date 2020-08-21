@@ -59,6 +59,15 @@
             <v-list-item-title>Ticket</v-list-item-title>
           </v-list-item>
         </template>
+        <template v-if="esAdministrador">
+          <v-list-item :to="{name:'tipoticket'}">
+            <v-list-item-action>
+              <v-icon>confirmation_number</v-icon>
+            </v-list-item-action>
+            <v-list-item-title>TipoTicket</v-list-item-title>
+          </v-list-item>
+        </template>
+
       </v-list>
     </v-navigation-drawer>
 
