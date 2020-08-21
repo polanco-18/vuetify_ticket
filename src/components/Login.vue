@@ -1,14 +1,15 @@
 <template>
   <v-layout align-center justify-center>
-    <v-flex xs="12" sm="8" md="6" lg="5" xl="4">
+    <v-flex xs="12" sm="8" md="6" lg="7" xl="4">
       <v-card max-width="500" class="mx-auto">
         <v-toolbar dark color="primary">
           <span class="headline">Acceso al sistema</span>
         </v-toolbar>
-
         <v-card-text>
           <v-container>
-            <img src="<%= BASE_URL %>Konecta.jpeg" alt="">
+            <v-row> 
+              <v-img src="../../public/Icono.jpg" aspect-ratio="2"></v-img> 
+            </v-row>
             <v-row>
               <v-col cols="12" sm="12" md="12">
                 <v-text-field autofocus label="Email" v-model="email" required></v-text-field>
@@ -68,14 +69,11 @@ export default {
         .catch((error) => {
           this.errorM = null;
           if (error.response.status == 404) {
-            this.errorM =
-              "Contraseña incorrecta";
-          }else if (error.response.status == 400) {
-            this.errorM =
-              "cuenta desactivada";
-          }else if (error.response.status == 401) {
-            this.errorM =
-              "No existe usuario";
+            this.errorM = "Contraseña incorrecta";
+          } else if (error.response.status == 400) {
+            this.errorM = "cuenta desactivada";
+          } else if (error.response.status == 401) {
+            this.errorM = "No existe usuario";
           } else {
             this.errorM = "Ocurrio un error con el servidor";
           }
